@@ -18,7 +18,6 @@ var tz_string_to_offset = {
 }
 
 
-/* GET users listing. */
 router.post('/', function(req, res, next) {
 
   //retreive time, name, and timezone from post data
