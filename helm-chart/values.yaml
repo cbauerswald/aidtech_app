@@ -4,7 +4,7 @@
 replicaCount: 1
 image:
   repository: cauerswald/aidtech_app
-  tag: 0.37.0
+  tag: 0.38.0
   pullPolicy: IfNotPresent
 service:
   name: mean-k8s
