@@ -3,12 +3,26 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-// var winston = require('winston');
 
+var app = express();
+
+//winston
+
+var winstonLogger = require('./config/logger.js')
+require('winston-logs-display')(app, winstonLogger);
+
+//Export winston logger so that appointment router can use it. 
+//Not the cleanest application of winston, but the default logger des not work with winston-logs-display
+
+module.exports = {
+  "app": app, 
+  "winstonLogger": winstonLogger
+}
+
+//set up routers
 var indexRouter = require('./routes/index');
 var appointmentRouter = require('./routes/appointment');
 
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,6 +36,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/appointment', appointmentRouter);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -39,4 +55,5 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+
+

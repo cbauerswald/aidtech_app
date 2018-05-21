@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var Agenda = require('agenda');
-var logger = require('winston');
 var database = require('../config/db.js');
+var winston=require('../app').winstonLogger;
 
 var tz_string_to_offset = {
   'America/New_York': -4,
@@ -17,17 +17,21 @@ var tz_string_to_offset = {
 
 }
 
+
 /* GET users listing. */
 router.post('/', function(req, res, next) {
 
+  //retreive time, name, and timezone from post data
   var time = new Date(req.body.when);
   var name = req.body.event;
   var timezone = req.body.timezone;
 
+  //very simple check if data is valid
   if (time=="" || name=="" || !(timezone in tz_string_to_offset)) {
     res.redirect("/?setReminder=failed");
   }
 
+  // set up reminder times in GMT but keep display time for user in their local timezone
   var eventTimeInTimeZone = new Date(req.body.when);
   var displayTime = eventTimeInTimeZone.toLocaleString() + ", Timezone: " + req.body.timezone;
   var timezoneOffset = tz_string_to_offset[timezone];
@@ -40,12 +44,12 @@ router.post('/', function(req, res, next) {
     // define jobs to be scheduled
     agenda.define('event reminder', function(job) {
       var data = job.attrs.data;
-      logger.info("REMINDER: " + data.name + " at " + data.time);
+      winston.info("REMINDER: " + data.name + " at " + data.time);
     });
 
     agenda.define('event happening', function(job) {
       var data = job.attrs.data;
-      logger.info("HAPPENING NOW: " + data.name + " (scheduled for: " + data.time + ")");
+      winston.info("HAPPENING NOW: " + data.name + " (scheduled for: " + data.time + ")");
     });
 
     //set events 
