@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  h1 Cecelia's Event Reminder Service
+  p= message
+  form(method='POST', action="/appointment")
+    label(for="name") Name:
+    input(id="event", name="event")
+    label(for="when") Date/Time:
+    input(id="when", name="when", type="datetime-local")
+    +select-timezone
+    input(type="submit" value="Create Reminder!")
